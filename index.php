@@ -15,6 +15,9 @@
 				width: 60px;
 				background-color: #FF0000;
 			}
+			.weightCheckERROR{
+				text-color:  #FF0000;
+			}
 			.container0{
 				width:240px;
 				float: left;
@@ -169,7 +172,7 @@
 				calc.appendChild(createInput("button","totalsCalc","","","Go!", function() { totalsCalc(); }));
 			}
 			function fillComponents(){
-				console.log("oi");
+				//console.log("oi");
 				components = [];
 				var k = 0;
 				for(var i=0;i<instance;i++)
@@ -195,28 +198,32 @@
 					for(var j=0;j<boxes[i];j++){
 						var comp = document.getElementById("text"+i+j).value;
 						var weight = ((document.getElementById("amount"+i+j).value)/serving)*portion;
-						
-						if(components.contains(comp)===false && comp !=""){
+						var idx = components.contains(comp);
+						if(idx===false && comp !=""){
 							componentsWeight[k] = weight;
 							components[k] = comp;
 							k++;
 						}else 
-							componentsWeight[k] += weight;
+							componentsWeight[idx] += weight;
+						console.log(weight);
 					}
 				}
 			}
 			function totalsCalc(){
 				sumWeight();
 				resetClass();
-				for(var k=0;k<components.length;k++){
-					console.log(components[k]);
+				for(var k = 0; k<components.length; k++){
+					console.log(components[k]+" peso:"+componentsWeight[k]);
 					var min = document.getElementById("min"+k).value;
 					var max = document.getElementById("max"+k).value;
-					console.log(min);
-					console.log(max);
-					console.log(componentsWeight[k]);
+					var wC = document.getElementById("wC"+k);
+					if(wC)
+						wC.parentNode.removeChild(wC);
+
+					document.getElementById("max"+k).insertAdjacentHTML ('afterEnd', " <span id='wC"+k+"'>"+componentsWeight[k]+"</span>");
 					if((componentsWeight[k]>max && max!="") || (componentsWeight[k]<min && min != ""))
 						changeClassERROR(components[k]);
+					
 				}
 			}
 			function changeClassERROR(value){
@@ -226,7 +233,13 @@
 							document.getElementById("text"+i+j).className = "nameERROR";
 							document.getElementById("amount"+i+j).className = "numberERROR";
 							document.getElementById("amount"+i).className = "numberERROR";
-						}		
+						}
+		//		for(var k = 0; k<components.length; k++)
+		//			if(components[k]==value){
+		//				var wC = document.getElementById("wC"+k);
+		//				if(wC) 
+		//					className = "weightCheckERROR";
+		//			}
 			}
 			function resetClass(){
 				for(var i=0;i<instance;i++)
@@ -234,7 +247,12 @@
 						document.getElementById("text"+i+j).className = "name";
 						document.getElementById("amount"+i+j).className = "number";
 						document.getElementById("amount"+i).className = "number";
-					}		
+					}
+		//		for(var k = 0; k<components.length; k++){
+		//			var wC = document.getElementById("wC"+k);
+		//			if(wC) 
+		//				className = "weightCheck";
+		//		}
 			}
 		</script>
 	</head>
