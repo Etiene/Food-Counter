@@ -95,7 +95,7 @@
 
             function delColumn(){
 				var column = document.getElementById(instance-1);
-				document.body.removeChild(column);
+				column.parentNode.removeChild(column);
 				boxes[instance] = 0;
 				instance--;
             }
@@ -229,7 +229,7 @@
 						changeClassERROR(components[k]);
 					
 				}
-				document.getElementById("calc").insertAdjacentHTML ('beforeEnd', "<br/> Portion price: "+portionPrice());	
+				document.getElementById("calc").insertAdjacentHTML ('beforeEnd', "<br/> Portion price: $"+portionPrice());	
 			}
 			function portionPrice(){
 				var portion_price = 0;
@@ -270,7 +270,7 @@
 			<br/>
 			<input type="button" id="btnTotals" value="Check Totals" onclick="totalsCheck();" />	
 			<br/>
-			<input type="button" id="btnCalc" value="Calc" onclick="calc();" />	
+			<input type="button" id="btnCalc" value="Check Comparisons" onclick="calc();" />	
 			<br/>
 			<div id="calc"></div>
 			<br/>
