@@ -4,8 +4,16 @@
 			.name{
 				width: 180px;
 			}
+			.nameERROR{
+				width: 180px;
+				background-color: #FF0000;
+			}
 			.number{
 				width: 60px;
+			}
+			.numberERROR{
+				width: 60px;
+				background-color: #FF0000;
 			}
 			.container0{
 				width:240px;
@@ -17,6 +25,8 @@
 			}
 		</style>
 		<script type="text/javascript">
+			var components = [];
+			var componentsWeight = [];
 			var instance = 0;
 			var boxes = [];
 			boxes[0] = 0;
@@ -104,10 +114,9 @@
 			};
 						
 			function calc(){
-
-				var outerHtml = "";
-				var outerComps = [];
-				var k = 0;
+	//			var outerHtml = "";
+	//			var outerComps = [];
+	//			var k = 0;
 				for(var i=0;i<instance;i++){
 					var innerHtml = "";
 					var innerComps = [];
@@ -115,20 +124,16 @@
 					var weight = document.getElementById("weight"+i).value;
 					var serving = document.getElementById("serving"+i).value;
 					var amount = document.getElementById("amount"+i).value;
-					console.log(price+weight+serving+amount);
 					var pricePerWeight = price / weight;
 					var pricePerServing = pricePerWeight * serving;
 					var pricePerAmount = pricePerWeight * amount;
-					console.log(pricePerWeight+"ha"+pricePerServing+"ah"+pricePerAmount);
 					innerHtml += "Price per weight unit: $"+pricePerWeight.toFixed(2)+"<br/>";
 					innerHtml += "Price per label serving: $"+pricePerServing.toFixed(2)+"<br/>";
 					innerHtml += "Price for your portion: $"+pricePerAmount.toFixed(2)+"<br/>";
 					
 					for(var j=0;j<boxes[i];j++){
 						var comp = document.getElementById("text"+i+j).value;
-						var compWeight = document.getElementById("amount"+i+j).value;
-						console.log(comp+"ha"+compWeight+"ah");
-						
+						var compWeight = document.getElementById("amount"+i+j).value;						
 						var weightInUnit = compWeight / serving ;
 						var weightInAmount = weightInUnit * amount;
 						var weightFull = weightInUnit * weight;
@@ -144,24 +149,101 @@
 						innerHtml += "Price of "+comp+" per Serving: $"+compPricePerServing.toFixed(2)+"<br/>";
 						innerHtml += "Price of "+comp+" for your portion: $"+compPricePerAmount.toFixed(2)+"<br/>";
 						innerHtml += "Price of "+comp+" per pack: $"+compPricePerJar.toFixed(2)+"<br/>";
-										
-						if(outerComps.contains(comp)===false){
-							outerHtml += comp+"<br/>";
-							outerComps[k] = comp;
-							k++;
-						}
 					}
 					document.getElementById("calc"+i).innerHTML = innerHtml;
 				}
-				//document.getElementById("calc").innerHTML = outerHtml;
 			}
 
+			function totalsCheck(){
+				var calc = document.getElementById("calc");
+				calc.innerHTML = "";
+				fillComponents();
+				for(var i = 0; i<components.length; i++){
+					console.log(components[i]);
+										
+					calc.insertAdjacentHTML ('beforeEnd', components[i]+": ");
+					calc.appendChild(createInput("text","min"+i,"min"+i,"number","","","Min..."));
+					calc.appendChild(createInput("text","max"+i,"max"+i,"number","","","Max..."));
+					calc.insertAdjacentHTML ('beforeEnd', "<br/>");							
+				}
+				calc.appendChild(createInput("button","totalsCalc","","","Go!", function() { totalsCalc(); }));
+			}
+			function fillComponents(){
+				console.log("oi");
+				components = [];
+				var k = 0;
+				for(var i=0;i<instance;i++)
+					for(var j=0;j<boxes[i];j++){
+						var comp = document.getElementById("text"+i+j).value;	
+						if(components.contains(comp)===false && comp !=""){
+							components[k] = comp;
+							k++;
+						}
+					}
+
+			}
+			function sumWeight(){
+				components = [];
+				var k = 0;
+				for(var i=0;i<instance;i++){
+					var serving = document.getElementById("serving"+i).value;
+					var portion = document.getElementById("amount"+i).value;
+					if(serving=="" || portion == ""){
+						alert("Please fill the fields serving and amount for all ingredients.");
+					}
+						
+					for(var j=0;j<boxes[i];j++){
+						var comp = document.getElementById("text"+i+j).value;
+						var weight = ((document.getElementById("amount"+i+j).value)/serving)*portion;
+						
+						if(components.contains(comp)===false && comp !=""){
+							componentsWeight[k] = weight;
+							components[k] = comp;
+							k++;
+						}else 
+							componentsWeight[k] += weight;
+					}
+				}
+			}
+			function totalsCalc(){
+				sumWeight();
+				resetClass();
+				for(var k=0;k<components.length;k++){
+					console.log(components[k]);
+					var min = document.getElementById("min"+k).value;
+					var max = document.getElementById("max"+k).value;
+					console.log(min);
+					console.log(max);
+					console.log(componentsWeight[k]);
+					if((componentsWeight[k]>max && max!="") || (componentsWeight[k]<min && min != ""))
+						changeClassERROR(components[k]);
+				}
+			}
+			function changeClassERROR(value){
+				for(var i=0;i<instance;i++)
+					for(var j=0;j<boxes[i];j++)
+						if(document.getElementById("text"+i+j).value==value){
+							document.getElementById("text"+i+j).className = "nameERROR";
+							document.getElementById("amount"+i+j).className = "numberERROR";
+							document.getElementById("amount"+i).className = "numberERROR";
+						}		
+			}
+			function resetClass(){
+				for(var i=0;i<instance;i++)
+					for(var j=0;j<boxes[i];j++){
+						document.getElementById("text"+i+j).className = "name";
+						document.getElementById("amount"+i+j).className = "number";
+						document.getElementById("amount"+i).className = "number";
+					}		
+			}
 		</script>
 	</head>
 	<body>
 
 		<input type="button" id="btnColAdd" value="Add Ingredient" onclick="addColumn(this);" />
 		<input type="button" id="btnColDel" value="Remove Ingredient" onclick="delColumn();" />			
+		<br/>
+		<input type="button" id="btnTotals" value="Check Totals" onclick="totalsCheck();" />	
 		<br/>
 		<input type="button" id="btnCalc" value="Calc" onclick="calc();" />	
 		<br/>
