@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+
+.name{
+	width: 180px;
+}
+.nameERROR{
+	width: 180px;
+	background-color: #FF0000;
+}
+.numberComp{
+	width: 60px;
+}
+.number{
+	width: 240px;
+}
+.button{
+	width: 240px;
+}
+.numberERROR{
+	width: 240px;
+	background-color: #FF0000;
+}
+.numberCompERROR{
+	width: 60px;
+	background-color: #FF0000;
+}
+.weightCheckERROR{
+	text-color:  #FF0000;
+}
+.container0{
+	width:260px;
+	float: left;
+	display:table;
+	padding: 10px;
+}
+.clear { clear: left; }
