@@ -1,10 +1,11 @@
 <html>
 	<head>
 		<link href="lackofstyle.css" rel="stylesheet" type="text/css">
-
+		<title>Simple Food Stuff Calculator v1.0 - By Etiene Dalcol</title>
 	</head>
 	<body>
 	<div class="wrapper">
+	<h1>Food Calculator</h1>
 		<div class="container0">
 			<input type="button" class="button" id="btnColAdd" value="Add Product" onclick="addColumn(this);" />
 			<input type="button" class="button" id="btnColDel" value="Remove Product" onclick="delColumn();" />			
