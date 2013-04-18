@@ -59,7 +59,7 @@
 				
 				var newInput = document.createElement("INPUT");
 
-				parent.insertBefore(createInput("text","text" + col + boxes[col],"text" + col + boxes[col],"name","","","Component..."),button);
+				parent.insertBefore(createInput("text","text" + col + boxes[col],"text" + col + boxes[col],"name","","","Ingredient Name..."),button);
 
 				parent.insertBefore(createInput("text","amount" + col + boxes[col],"amount" + col + boxes[col],"numberComp","","","Weight..."),button);
 				boxes[col]++;
@@ -85,12 +85,12 @@
 
             function addColumn(button){
                 boxes[instance] = 0;
-				var div = '<div class="container0" id="'+instance+'"> Ingredient '+(instance+1)+':<br/></div>';
+				var div = '<div class="container0" id="'+instance+'"> Product '+(instance+1)+':<br/></div>';
 				button.parentNode.insertAdjacentHTML('beforebegin',div);
 				var newCol = document.getElementById(instance);
 				
-				newCol.appendChild(createInput("button","btnAdd"+instance,"","button","Add component", function() { newTextBox(this,null); }));
-				newCol.appendChild(createInput("button","btnDel"+instance,"","button","Remove component", function() { delTextBox(this.parentNode); }));
+				newCol.appendChild(createInput("button","btnAdd"+instance,"","button","Add Ingredient", function() { newTextBox(this,null); }));
+				newCol.appendChild(createInput("button","btnDel"+instance,"","button","Remove Ingredient", function() { delTextBox(this.parentNode); }));
 				newCol.insertAdjacentHTML('beforeEnd','<br/>Price of product: ');
 				newCol.appendChild(createInput("text","price"+instance,"price"+instance,"number","","","Price..."));
 				newCol.insertAdjacentHTML('beforeEnd','<br/>Product weight: ');
@@ -144,31 +144,37 @@
 					var weight = document.getElementById("weight"+i).value;
 					var serving = document.getElementById("serving"+i).value;
 					var amount = document.getElementById("amount"+i).value;
-					var pricePerWeight = price / weight;
-					var pricePerServing = pricePerWeight * serving;
-					var pricePerAmount = pricePerWeight * amount;
-					innerHtml += "Price per weight unit: $"+pricePerWeight.toFixed(2)+"<br/>";
-					innerHtml += "Price per label serving: $"+pricePerServing.toFixed(2)+"<br/>";
-					innerHtml += "Price for your portion: $"+pricePerAmount.toFixed(2)+"<br/>";
-					
+					if(!price || !weight || !serving || !amount)
+						alert("Please fill in the details of your product");
+					else{
+						var pricePerWeight = price / weight;
+						var pricePerServing = pricePerWeight * serving;
+						var pricePerAmount = pricePerWeight * amount;
+						
+						innerHtml += "Price per weight unit: $"+pricePerWeight.toFixed(2)+"<br/>";
+						innerHtml += "Price per label serving: $"+pricePerServing.toFixed(2)+"<br/>";
+						innerHtml += "Price for your portion: $"+pricePerAmount.toFixed(2)+"<br/>";
+					}
 					for(var j=0;j<boxes[i];j++){
 						var comp = document.getElementById("text"+i+j).value;
-						var compWeight = document.getElementById("amount"+i+j).value;						
-						var weightInUnit = compWeight / serving ;
-						var weightInAmount = weightInUnit * amount;
-						var weightFull = weightInUnit * weight;
-						var compPricePerWU = pricePerWeight * weightInUnit;
-						var compPricePerServing =  pricePerServing * weightInUnit;
-						var compPricePerAmount = pricePerAmount * weightInUnit;
-						var compPricePerJar = price * weightInUnit;
-						
-						innerHtml += "% of "+comp+" in weight unit: "+(weightInUnit*100).toFixed(2)+"%<br/>";
-						innerHtml += "Weight of "+comp+" in your portion: "+weightInAmount.toFixed(3)+"<br/>";
-						innerHtml += "Weight of "+comp+" in the whole pack: "+weightFull.toFixed(2)+"<br/>";
-						innerHtml += "Price of "+comp+" per Weight Unit: $"+compPricePerWU.toFixed(2)+"<br/>";
-						innerHtml += "Price of "+comp+" per Serving: $"+compPricePerServing.toFixed(2)+"<br/>";
-						innerHtml += "Price of "+comp+" for your portion: $"+compPricePerAmount.toFixed(2)+"<br/>";
-						innerHtml += "Price of "+comp+" per pack: $"+compPricePerJar.toFixed(2)+"<br/>";
+						var compWeight = document.getElementById("amount"+i+j).value;
+						if(comp!="" && compWeight!=""){						
+							var weightInUnit = compWeight / serving ;
+							var weightInAmount = weightInUnit * amount;
+							var weightFull = weightInUnit * weight;
+							var compPricePerWU = pricePerWeight * weightInUnit;
+							var compPricePerServing =  pricePerServing * weightInUnit;
+							var compPricePerAmount = pricePerAmount * weightInUnit;
+							var compPricePerJar = price * weightInUnit;
+							
+							innerHtml += "% of "+comp+" in weight unit: "+(weightInUnit*100).toFixed(2)+"%<br/>";
+							innerHtml += "Weight of "+comp+" in your portion: "+weightInAmount.toFixed(3)+"<br/>";
+							innerHtml += "Weight of "+comp+" in the whole pack: "+weightFull.toFixed(2)+"<br/>";
+							innerHtml += "Price of "+comp+" per Weight Unit: $"+compPricePerWU.toFixed(2)+"<br/>";
+							innerHtml += "Price of "+comp+" per Serving: $"+compPricePerServing.toFixed(2)+"<br/>";
+							innerHtml += "Price of "+comp+" for your portion: $"+compPricePerAmount.toFixed(2)+"<br/>";
+							innerHtml += "Price of "+comp+" per pack: $"+compPricePerJar.toFixed(2)+"<br/>";
+						}
 					}
 					document.getElementById("calc"+i).innerHTML = innerHtml;
 				}
@@ -184,7 +190,10 @@
 					calc.appendChild(createInput("text","max"+i,"max"+i,"numberComp","","","Max..."));
 					calc.insertAdjacentHTML ('beforeEnd', "<br/>");							
 				}
-				calc.appendChild(createInput("button","totalsCalc","","","Go!", function() { totalsCalc(); }));
+				if(components.length>0)
+					calc.appendChild(createInput("button","totalsCalc","","","Go!", function() { totalsCalc(); }));
+				else
+					alert("There are no components to sum!");
 			}
 			function fillComponents(){
 				components = [];
@@ -208,22 +217,22 @@
 					var price = document.getElementById("price"+i).value;
 					var weight = document.getElementById("weight"+i).value;
 					if(serving=="" || portion == "" || price == ""){
-						alert("Please fill the fields price, serving, your portion amount and weight for all ingredients.");
+						alert("Please fill the details for all products.");
 					}
-						
-					for(var j=0;j<boxes[i];j++){
-						var comp = document.getElementById("text"+i+j).value;
-						var weight = ((document.getElementById("amount"+i+j).value)/serving)*portion;
-						var idx = components.contains(comp);
-						if(weight!=""){
-							if(idx===false && comp !=""){
-								componentsWeight[k] = weight;
-								components[k] = comp;
-								k++;
-							}else 
-								componentsWeight[idx] += weight;
+					else	
+						for(var j=0;j<boxes[i];j++){
+							var comp = document.getElementById("text"+i+j).value;
+							var weight = ((document.getElementById("amount"+i+j).value)/serving)*portion;
+							var idx = components.contains(comp);
+							if(weight!=""){
+								if(idx===false && comp !=""){
+									componentsWeight[k] = weight;
+									components[k] = comp;
+									k++;
+								}else 
+									componentsWeight[idx] += weight;
+							}
 						}
-					}
 				}
 			}
 			function totalsCalc(){
@@ -237,12 +246,17 @@
 					if(wC)
 						wC.parentNode.removeChild(wC);
 
-					document.getElementById("max"+k).insertAdjacentHTML ('afterEnd', " <span id='wC"+k+"'>"+componentsWeight[k]+"</span>");
+					document.getElementById("max"+k).insertAdjacentHTML ('afterEnd', " <span id='wC"+k+"'> Total: "+componentsWeight[k]+"</span>");
 					if((componentsWeight[k]>max && max!="") || (componentsWeight[k]<min && min != ""))
 						changeClassERROR(components[k]);
 					
 				}
-				document.getElementById("calc").insertAdjacentHTML('beforeEnd', "<br/> Portion price: $"+portionPrice());	
+				var pp = document.getElementById("pp");
+				if(pp)
+					pp.parentNode.removeChild(pp);
+				var pprice = portionPrice();
+				if(pprice)
+					document.getElementById("calc").insertAdjacentHTML('beforeEnd', "<span id='pp'><br/>Portion price: $"+pprice+"</span>");	
 			}
 			function portionPrice(){
 				var portion_price = 0;
@@ -250,10 +264,9 @@
 					var price = document.getElementById("price"+i).value;
 					var weight = document.getElementById("weight"+i).value;
 					var amount = document.getElementById("amount"+i).value;
-					console.log(price);
-					portion_price += (price/weight)*amount;
+					if(price && weight && amount)
+						portion_price += (price/weight)*amount;
 				}
-				console.log(portion_price.toFixed(2));
 				return portion_price.toFixed(2);
 			}
 			function changeClassERROR(value){
@@ -278,8 +291,8 @@
 	<body>
 	<div class="wrapper">
 		<div class="container0">
-			<input type="button" class="button" id="btnColAdd" value="Add Ingredient" onclick="addColumn(this);" />
-			<input type="button" class="button" id="btnColDel" value="Remove Ingredient" onclick="delColumn();" />			
+			<input type="button" class="button" id="btnColAdd" value="Add Product" onclick="addColumn(this);" />
+			<input type="button" class="button" id="btnColDel" value="Remove Product" onclick="delColumn();" />			
 			<br/>
 			<input type="button" class="button" id="btnTotals" value="Check Totals" onclick="totalsCheck();" />	
 			<br/>
