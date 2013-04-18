@@ -20,6 +20,8 @@
 			<div id="result"></div>
 		</div>
 		</div>
+		<div class="clear"></div>
+		<br/>Note: It doesn't matter which weight unit you use as long it is the same for all weight fields.
 		<script src="fc.js"></script>
 	</body>
 </html>
