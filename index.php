@@ -2,6 +2,7 @@
 	<head>
 		<link href="lackofstyle.css" rel="stylesheet" type="text/css">
 		<title>Simple Food Stuff Calculator v1.0 - By Etiene Dalcol</title>
+		<link rel="icon" type="image/png" href="favicon.png">
 	</head>
 	<body>
 	<div class="wrapper">
