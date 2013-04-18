@@ -8,10 +8,20 @@
 				width: 180px;
 				background-color: #FF0000;
 			}
-			.number{
+			.numberComp{
 				width: 60px;
 			}
+			.number{
+				width: 240px;
+			}
+			.button{
+				width: 240px;
+			}
 			.numberERROR{
+				width: 240px;
+				background-color: #FF0000;
+			}
+			.numberCompERROR{
 				width: 60px;
 				background-color: #FF0000;
 			}
@@ -19,14 +29,13 @@
 				text-color:  #FF0000;
 			}
 			.container0{
-				width:240px;
+				width:260px;
 				float: left;
 				display:table;
+				padding: 10px;
 			}
-			.container{
-				width:110px;
-			//	float:left;
-				display:table;
+			.container0 input{
+				//display:table;
 			}
 			.clear { clear: left; }
 			.wrapper div{
@@ -52,7 +61,7 @@
 
 				parent.insertBefore(createInput("text","text" + col + boxes[col],"text" + col + boxes[col],"name","","","Component..."),button);
 
-				parent.insertBefore(createInput("text","amount" + col + boxes[col],"amount" + col + boxes[col],"number","","","Weight..."),button);
+				parent.insertBefore(createInput("text","amount" + col + boxes[col],"amount" + col + boxes[col],"numberComp","","","Weight..."),button);
 				boxes[col]++;
 				
 			}
@@ -80,12 +89,16 @@
 				button.parentNode.insertAdjacentHTML('beforebegin',div);
 				var newCol = document.getElementById(instance);
 				
-				newCol.appendChild(createInput("button","btnAdd"+instance,"","","Add component", function() { newTextBox(this,null); }));
-				newCol.appendChild(createInput("button","btnDel"+instance,"","","Remove component", function() { delTextBox(this.parentNode); }));
+				newCol.appendChild(createInput("button","btnAdd"+instance,"","button","Add component", function() { newTextBox(this,null); }));
+				newCol.appendChild(createInput("button","btnDel"+instance,"","button","Remove component", function() { delTextBox(this.parentNode); }));
+				newCol.insertAdjacentHTML('beforeEnd','<br/>Price of product: ');
 				newCol.appendChild(createInput("text","price"+instance,"price"+instance,"number","","","Price..."));
-				newCol.appendChild(createInput("text","serving"+instance,"serving"+instance,"number","","","Serving..."));
-				newCol.appendChild(createInput("text","amount"+instance,"amount"+instance,"number","","","Amount..."));			
+				newCol.insertAdjacentHTML('beforeEnd','<br/>Product weight: ');
 				newCol.appendChild(createInput("text","weight"+instance,"weight"+instance,"number","","","Weight..."));
+				newCol.insertAdjacentHTML('beforeEnd','<br/>Label serving: ');
+				newCol.appendChild(createInput("text","serving"+instance,"serving"+instance,"number","","","Weight..."));
+				newCol.insertAdjacentHTML('beforeEnd','<br/>Your portion: ');
+				newCol.appendChild(createInput("text","amount"+instance,"amount"+instance,"number","","","Weight..."));			
 				var innerCalc = document.createElement("DIV");
 				innerCalc.id = "calc"+instance;
 				innerCalc.className = "innercalc";
@@ -167,8 +180,8 @@
 				fillComponents();
 				for(var i = 0; i<components.length; i++){									
 					calc.insertAdjacentHTML ('beforeEnd', components[i]+": ");
-					calc.appendChild(createInput("text","min"+i,"min"+i,"number","","","Min..."));
-					calc.appendChild(createInput("text","max"+i,"max"+i,"number","","","Max..."));
+					calc.appendChild(createInput("text","min"+i,"min"+i,"numberComp","","","Min..."));
+					calc.appendChild(createInput("text","max"+i,"max"+i,"numberComp","","","Max..."));
 					calc.insertAdjacentHTML ('beforeEnd', "<br/>");							
 				}
 				calc.appendChild(createInput("button","totalsCalc","","","Go!", function() { totalsCalc(); }));
@@ -229,7 +242,7 @@
 						changeClassERROR(components[k]);
 					
 				}
-				document.getElementById("calc").insertAdjacentHTML ('beforeEnd', "<br/> Portion price: $"+portionPrice());	
+				document.getElementById("calc").insertAdjacentHTML('beforeEnd', "<br/> Portion price: $"+portionPrice());	
 			}
 			function portionPrice(){
 				var portion_price = 0;
@@ -248,7 +261,7 @@
 					for(var j=0;j<boxes[i];j++)
 						if(document.getElementById("text"+i+j).value==value){
 							document.getElementById("text"+i+j).className = "nameERROR";
-							document.getElementById("amount"+i+j).className = "numberERROR";
+							document.getElementById("amount"+i+j).className = "numberCompERROR";
 							document.getElementById("amount"+i).className = "numberERROR";
 						}
 			}
@@ -256,7 +269,7 @@
 				for(var i=0;i<instance;i++)
 					for(var j=0;j<boxes[i];j++){
 						document.getElementById("text"+i+j).className = "name";
-						document.getElementById("amount"+i+j).className = "number";
+						document.getElementById("amount"+i+j).className = "numberComp";
 						document.getElementById("amount"+i).className = "number";
 					}
 			}
@@ -265,12 +278,12 @@
 	<body>
 	<div class="wrapper">
 		<div class="container0">
-			<input type="button" id="btnColAdd" value="Add Ingredient" onclick="addColumn(this);" />
-			<input type="button" id="btnColDel" value="Remove Ingredient" onclick="delColumn();" />			
+			<input type="button" class="button" id="btnColAdd" value="Add Ingredient" onclick="addColumn(this);" />
+			<input type="button" class="button" id="btnColDel" value="Remove Ingredient" onclick="delColumn();" />			
 			<br/>
-			<input type="button" id="btnTotals" value="Check Totals" onclick="totalsCheck();" />	
+			<input type="button" class="button" id="btnTotals" value="Check Totals" onclick="totalsCheck();" />	
 			<br/>
-			<input type="button" id="btnCalc" value="Check Comparisons" onclick="calc();" />	
+			<input type="button" class="button" id="btnCalc" value="Check Comparisons" onclick="calc();" />	
 			<br/>
 			<div id="calc"></div>
 			<br/>
