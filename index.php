@@ -144,8 +144,8 @@
 					var weight = document.getElementById("weight"+i).value;
 					var serving = document.getElementById("serving"+i).value;
 					var amount = document.getElementById("amount"+i).value;
-					if(!price || !weight || !serving || !amount)
-						alert("Please fill in the details of your product");
+					if(isNaN(price) || isNaN(weight) || isNaN(serving) || isNaN(amount))
+						alert("Please fill in the details of your product and make sure weights and prices are numbers");
 					else{
 						var pricePerWeight = price / weight;
 						var pricePerServing = pricePerWeight * serving;
@@ -154,26 +154,29 @@
 						innerHtml += "Price per weight unit: $"+pricePerWeight.toFixed(2)+"<br/>";
 						innerHtml += "Price per label serving: $"+pricePerServing.toFixed(2)+"<br/>";
 						innerHtml += "Price for your portion: $"+pricePerAmount.toFixed(2)+"<br/>";
-					}
-					for(var j=0;j<boxes[i];j++){
-						var comp = document.getElementById("text"+i+j).value;
-						var compWeight = document.getElementById("amount"+i+j).value;
-						if(comp!="" && compWeight!=""){						
-							var weightInUnit = compWeight / serving ;
-							var weightInAmount = weightInUnit * amount;
-							var weightFull = weightInUnit * weight;
-							var compPricePerWU = pricePerWeight * weightInUnit;
-							var compPricePerServing =  pricePerServing * weightInUnit;
-							var compPricePerAmount = pricePerAmount * weightInUnit;
-							var compPricePerJar = price * weightInUnit;
-							
-							innerHtml += "% of "+comp+" in weight unit: "+(weightInUnit*100).toFixed(2)+"%<br/>";
-							innerHtml += "Weight of "+comp+" in your portion: "+weightInAmount.toFixed(3)+"<br/>";
-							innerHtml += "Weight of "+comp+" in the whole pack: "+weightFull.toFixed(2)+"<br/>";
-							innerHtml += "Price of "+comp+" per Weight Unit: $"+compPricePerWU.toFixed(2)+"<br/>";
-							innerHtml += "Price of "+comp+" per Serving: $"+compPricePerServing.toFixed(2)+"<br/>";
-							innerHtml += "Price of "+comp+" for your portion: $"+compPricePerAmount.toFixed(2)+"<br/>";
-							innerHtml += "Price of "+comp+" per pack: $"+compPricePerJar.toFixed(2)+"<br/>";
+					
+						for(var j=0;j<boxes[i];j++){
+							var comp = document.getElementById("text"+i+j).value;
+							var compWeight = document.getElementById("amount"+i+j).value;
+							if(comp!="" && !isNaN(compWeight)){						
+								var weightInUnit = compWeight / serving ;
+								var weightInAmount = weightInUnit * amount;
+								var weightFull = weightInUnit * weight;
+								var compPricePerWU = pricePerWeight * weightInUnit;
+								var compPricePerServing =  pricePerServing * weightInUnit;
+								var compPricePerAmount = pricePerAmount * weightInUnit;
+								var compPricePerJar = price * weightInUnit;
+								
+								innerHtml += "% of "+comp+" in weight unit: "+(weightInUnit*100).toFixed(2)+"%<br/>";
+								innerHtml += "Weight of "+comp+" in your portion: "+weightInAmount.toFixed(3)+"<br/>";
+								innerHtml += "Weight of "+comp+" in the whole pack: "+weightFull.toFixed(2)+"<br/>";
+								innerHtml += "Price of "+comp+" per Weight Unit: $"+compPricePerWU.toFixed(2)+"<br/>";
+								innerHtml += "Price of "+comp+" per Serving: $"+compPricePerServing.toFixed(2)+"<br/>";
+								innerHtml += "Price of "+comp+" for your portion: $"+compPricePerAmount.toFixed(2)+"<br/>";
+								innerHtml += "Price of "+comp+" per pack: $"+compPricePerJar.toFixed(2)+"<br/>";
+							}
+							else
+								alert("Make sure fields are filled and prices and weights are numbers");
 						}
 					}
 					document.getElementById("calc"+i).innerHTML = innerHtml;
@@ -239,23 +242,24 @@
 				sumWeight();
 				resetClass();
 				for(var k = 0; k<components.length; k++){
-					console.log(components[k]+" peso:"+componentsWeight[k]);
 					var min = document.getElementById("min"+k).value;
 					var max = document.getElementById("max"+k).value;
 					var wC = document.getElementById("wC"+k);
 					if(wC)
 						wC.parentNode.removeChild(wC);
-
-					document.getElementById("max"+k).insertAdjacentHTML ('afterEnd', " <span id='wC"+k+"'> Total: "+componentsWeight[k]+"</span>");
-					if((componentsWeight[k]>max && max!="") || (componentsWeight[k]<min && min != ""))
-						changeClassERROR(components[k]);
-					
+					if( isNaN(componentsWeight[k]))
+						alert("Make sure all your ingredients' weights are numbers");
+					else if((componentsWeight[k]>max && max!="") || (componentsWeight[k]<min && min != ""))
+						changeClassERROR(components[k]);	
+					else
+						document.getElementById("max"+k).insertAdjacentHTML ('afterEnd', " <span id='wC"+k+"'> Total: "+componentsWeight[k].toFixed(2)+"</span>");
+								
 				}
 				var pp = document.getElementById("pp");
 				if(pp)
 					pp.parentNode.removeChild(pp);
 				var pprice = portionPrice();
-				if(pprice)
+				if(!isNaN(pprice))
 					document.getElementById("calc").insertAdjacentHTML('beforeEnd', "<span id='pp'><br/>Portion price: $"+pprice+"</span>");	
 			}
 			function portionPrice(){
